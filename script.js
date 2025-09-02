@@ -1,9 +1,14 @@
-// i'll have a form, the form takes a book, a book must have at least a title, an author and a read status(T/F).
-// the display should start with 2 default books. with False read status, which the user can change to true.
-// There will be a + on the right side of the form to add more books.
-// // Initial books
-const myLibrary = [];
+
 const container = document.querySelector(".container");
+const add = document.querySelector(".add-book-btn");
+const remove = document.querySelector(".remove-book-btn");
+const myLibrary = [];
+
+addNewBook(add);
+addBookToLibrary("Crime and Punishment", "Fyodor Dostoevsky", 430, false);
+addBookToLibrary("The Brothers Karamazov", "Fyodor Dostoevsky", 796, false);
+
+renderLibrary();
 
 
 function Book(title, author, pages, read) {
@@ -20,24 +25,6 @@ function addBookToLibrary(title, author, pages, read) {
     myLibrary.push(newBook);
 }
 
-function renderBook(book) {
-    const bookCard = document.createElement("div");
-    bookCard.classList.add("book-card");
-    bookCard.innerHTML = `
-        <h3>${book.title}</h3>
-        <p>Author: ${book.author}</p>
-        <p>Pages: ${book.pages}</p>
-        <p>Read: ${book.read ? "Yes" : "No"}</p>
-        <button class="toggle-read-btn" data-id="${book.id}">Toggle Read Status</button>
-        <button class="remove-book-btn" data-id="${book.id}">Remove Book</button>
-    `;
-    container.appendChild(bookCard);
-}
-
-function renderLibrary() {
-    container.innerHTML = "";
-    myLibrary.forEach(renderBook);
-}
 
 function addNewBook(add) {
     add.addEventListener("click", (event) => {
@@ -52,36 +39,66 @@ function addNewBook(add) {
                 <label for="pages">Pages:</label>
                 <input type="number" placeholder="Enter number of pages" id="pages" required>
                 <label for="read">Read:</label>
-                <select id="read">
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
+                <input type="checkbox" id="read">
                 <button type="submit">Add Book</button>
             </form>
         `;
         document.body.appendChild(addDialog);
         addDialog.showModal();
-
+        
         // addDialog.addEventListener("close", () => {
-        //     document.body.removeChild(addDialog);
-        // });
-
-        addDialog.querySelector("form").addEventListener("submit", (event) => {
-            event.preventDefault();
-            const title = document.querySelector("#title").value;
-            const author = document.querySelector("#author").value;
-            const pages = document.querySelector("#pages").value;
-            const read = document.querySelector("#read").checked;
-
-            addBookToLibrary(title, author, pages, read);
-            addDialog.close();
-            renderLibrary();
-        });
+            //     document.body.removeChild(addDialog);
+            // });
+            
+            addDialog.querySelector("form").addEventListener("submit", (event) => {
+                event.preventDefault();
+                const title = document.querySelector("#title").value;
+                const author = document.querySelector("#author").value;
+                const pages = document.querySelector("#pages").value;
+                const read = document.querySelector("#read").checked;
+                
+                addBookToLibrary(title, author, pages, read);
+                addDialog.close();
+                renderLibrary();
+            });
     });
 }
-const add = document.querySelector(".add-book-btn");
-addNewBook(add);
-addBookToLibrary("Crime and Punishment", "Fyodor Dostoevsky", 430, false);
-addBookToLibrary("The Brothers Karamazov", "Fyodor Dostoevsky", 796, false);
 
-renderLibrary();
+function renderBook(book) {
+    const bookCard = document.createElement("div");
+    bookCard.classList.add("book-card");
+    bookCard.innerHTML = `
+        <h3>${book.title}</h3>
+        <p>Author: ${book.author}</p>
+        <p>Pages: ${book.pages}</p>
+        <p>Read: ${book.read ? "Yes" : "No"}</p>
+        <input type="checkbox" data-id="${book.id}" ${book.read ? "checked" : ""} onclick="toggleReadStatus(this)">
+        <button class="remove-book-btn" onclick="removeBook(this)" data-id="${book.id}">Remove Book</button>
+    `;
+    container.appendChild(bookCard);
+}
+
+function renderLibrary() {
+    container.innerHTML = "";
+    myLibrary.forEach(renderBook);
+}
+
+function removeBook(button) {
+  const id = button.dataset.id;
+  const index = myLibrary.findIndex(book => book.id === id);
+  if (index > -1) {
+    myLibrary.splice(index, 1);
+  }
+  renderLibrary();
+}
+
+function toggleReadStatus(checkbox) {
+  const id = checkbox.dataset.id; 
+  const book = myLibrary.find(b => b.id === id);
+
+  if (book) {
+    book.read = checkbox.checked; 
+  }
+
+  renderLibrary();
+}
