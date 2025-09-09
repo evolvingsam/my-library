@@ -26,11 +26,6 @@ book3.addBookToLibrary();
 renderLibrary();
 
 
-// function addBookToLibrary(title, author, pages, read) {
-//     const newBook = new Book(title, author, pages, read);
-//     myLibrary.push(newBook);
-// }
-
 
 function addNewBook(add) {
     add.addEventListener("click", (event) => {
