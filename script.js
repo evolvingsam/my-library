@@ -1,7 +1,5 @@
-
 const container = document.querySelector(".container");
 const add = document.querySelector(".add-book-btn");
-const remove = document.querySelector(".remove-book-btn");
 const myLibrary = [];
 
 addNewBook(add);
